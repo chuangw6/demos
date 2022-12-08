@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: clone-and-build-pipelinerun
+spec:
+  serviceAccountName: myksa
+  params:
+    - name: git-repo
+      value: https://github.com/chuangw6/demos
+    - name: git-revision
+      value: main
+    - name: DOCKERFILE
+      value: cdf/src/Dockerfile
+    - name: kaniko_IMAGE_REF
+      value: us-central1-docker.pkg.dev/chuangw-test/kaniko-example/ci
+  pipelineRef:
+    resolver: git
+    params:
+      - name: url
+        value: https://github.com/chuangw6/demos
+      - name: revision
+        value: v0.1
+      - name: pathInRepo
+        value: cdf/pipelines/ci-pipeline.yaml
+  workspaces:
+    - name: shared
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 500Mi

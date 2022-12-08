@@ -1,0 +1,76 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: clone-and-build-pipeline
+spec:
+  description: |
+    This simple pipeline contains 2 CI tasks - clone source repo, and build an image using
+    the dockerfile in the cloned repo.
+  workspaces:
+    - name: shared
+  params:
+    - name: git-repo
+      description: The source repo to clone.
+    - name: git-revision
+      description: The revision of the source repo.
+    - name: kaniko_IMAGE_REF
+      description: Name (reference) of the image to build.
+    - name: kaniko_BUILDER_IMAGE
+      description: The Kaniko executor image to use.
+      default: gcr.io/kaniko-project/executor:latest
+    - name: DOCKERFILE
+      description: Path to the Dockerfile to build.
+      default: ./Dockerfile
+  results:
+    - name: CHAINS-GIT_URL
+      description: Git URL that the source repo containing Dockerfile is fetched from
+      value: $(tasks.clone-source.results.url)
+    - name: CHAINS-GIT_COMMIT
+      description: Git commit sha of the source repo containing Dockerfile
+      value: $(tasks.clone-source.results.commit)
+    - name: IMAGE_DIGEST
+      description: Digest of the image just built by the pipeline.
+      value: $(tasks.build-image.results.IMAGE_DIGEST)
+    - name: IMAGE_URL
+      description: URL of the image just built by the pipeline.
+      value: $(tasks.build-image.results.IMAGE_URL)
+  tasks:
+    - name: clone-source
+      taskRef:
+        resolver: bundles
+        params:
+          - name: bundle
+            value: gcr.io/tekton-releases/catalog/upstream/git-clone:0.7
+          - name: name
+            value: git-clone
+          - name: kind
+            value: task
+      params:
+        - name: url
+          value: $(params.git-repo)
+        - name: revision
+          value: $(params.git-revision)
+      workspaces:
+        - name: output
+          workspace: shared
+    - name: build-image
+      runAfter: ["clone-source"]
+      taskRef:
+        resolver: bundles
+        params:
+          - name: bundle
+            value: gcr.io/tekton-releases/catalog/upstream/kaniko:0.6
+          - name: name
+            value: kaniko
+          - name: kind
+            value: task
+      params:
+        - name: IMAGE
+          value: $(params.kaniko_IMAGE_REF)
+        - name: BUILDER_IMAGE
+          value: $(params.kaniko_BUILDER_IMAGE)
+        - name: DOCKERFILE
+          value: $(params.DOCKERFILE)
+      workspaces:
+        - name: source
+          workspace: shared
