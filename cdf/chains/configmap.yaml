@@ -13,5 +13,6 @@ data:
   signers.kms.kmsref: gcpkms://projects/chuangw-test/locations/global/keyRings/test/cryptoKeys/mykey/versions/1
   storage.grafeas.projectid: chuangw-test
   storage.grafeas.noteid: builder-test
+  builder.id: testbuilder.com
   artifacts.taskrun.storage: "" # disabled
   artifacts.oci.storage: "" # disabled

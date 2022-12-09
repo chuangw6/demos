@@ -22,6 +22,9 @@ Step 5:
   - Use [AR `gcloud` describe](https://cloud.google.com/sdk/gcloud/reference/artifacts/docker/images/describe) command to retrieve the provenance and signature, which interagates well with Container Analysis and shows provenance as image metadata. 
   - Use [cosign `verify-blob` command](https://github.com/sigstore/cosign/blob/main/doc/cosign_verify-blob.md) to verify the signature.
 
+> Note: Feel free to checkout [the SLSA provenance](provenance.json) generated for the whole pipeline.
+
+
 ## Possible future work
 - Intergration with [slsa-verifier](https://github.com/slsa-framework/slsa-verifier).
 - [Binary Authorization](https://cloud.google.com/binary-authorization) controls image deployment by checking policies against SLSA provenance.
