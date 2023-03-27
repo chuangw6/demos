@@ -19,7 +19,7 @@ spec:
       - name: url
         value: https://github.com/chuangw6/demos
       - name: revision
-        value: v0.1
+        value: v0.2
       - name: pathInRepo
         value: cdf/pipelines/ci-pipeline.yaml
   workspaces:

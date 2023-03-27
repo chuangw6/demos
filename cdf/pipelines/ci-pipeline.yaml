@@ -17,7 +17,7 @@ spec:
       description: Name (reference) of the image to build.
     - name: kaniko_BUILDER_IMAGE
       description: The Kaniko executor image to use.
-      default: gcr.io/kaniko-project/executor:latest
+      default: gcr.io/kaniko-project/executor:v1.9.1
     - name: DOCKERFILE
       description: Path to the Dockerfile to build.
       default: ./Dockerfile
